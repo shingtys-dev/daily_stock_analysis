@@ -1,7 +1,21 @@
 name: newpc-runner
 on: [push, pull_request]
 jobs:
-  hello:
+  backend-gate:
+    name: backend-gate (newpc)
     runs-on: [self-hosted, newpc]
     steps:
-      - run: echo "hello from $(hostname)" && python3 --version
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: |
+            requirements.txt
+            .github/requirements-ci.txt
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r .github/requirements-ci.txt
+      - name: Run ci_gate (syntax + flake8 + deterministic + offline tests)
+        run: ./scripts/ci_gate.sh all
