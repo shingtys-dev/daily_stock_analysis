@@ -1,0 +1,7 @@
+name: newpc-runner
+on: [push, pull_request]
+jobs:
+  hello:
+    runs-on: [self-hosted, newpc]
+    steps:
+      - run: echo "hello from $(hostname)" && python3 --version
