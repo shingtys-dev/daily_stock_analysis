@@ -6,9 +6,10 @@ jobs:
     runs-on: [self-hosted, newpc]
     steps:
       - uses: actions/checkout@v5
-      - name: Install deps (system python3)
+      - name: Install deps (venv, system python3.14)
         run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install -r .github/requirements-ci.txt
+          python3 -m venv .ci-venv
+          .ci-venv/bin/python -m pip install --upgrade pip
+          .ci-venv/bin/python -m pip install -r .github/requirements-ci.txt
       - name: Run ci_gate (syntax + flake8 + deterministic + offline tests)
-        run: ./scripts/ci_gate.sh all
+        run: PATH="$PWD/.ci-venv/bin:$PATH" ./scripts/ci_gate.sh all
